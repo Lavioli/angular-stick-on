@@ -3,6 +3,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Angular Material style sheet -->
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <!-- Google Material Icon  Library-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body ng-app="stickOnApp" ng-cloak>
@@ -10,21 +11,46 @@
   <div ng-controller="appCtrl">
 
 <!-- simple toolbar with menu -->
-       <md-toolbar class="md-hue-2">
-         <div class="md-toolbar-tools">
-           <md-button class="md-icon-button" aria-label="Favorite">
-             <md-icon><i class="material-icons">dehaze</i></md-icon>
-           </md-button>
-           <h2>
-             <span>Toolbar with Disabled/Enabled Icon Buttons</span>
-           </h2>
-         </div>
-       </md-toolbar>
+  <md-toolbar class="md-hue-2">
+   <div class="md-toolbar-tools">
+     <md-button class="md-icon-button" aria-label="Favorite">
+       <md-icon><i class="material-icons">dehaze</i></md-icon>
+     </md-button>
+     <h2>
+       <span>Toolbar with Disabled/Enabled Icon Buttons</span>
+     </h2>
+   </div>
+  </md-toolbar>
+
+<!-- cards -->
+    <md-content class="md-padding" layout-xs="column" layout="row">
+        <div flex-xs flex-gt-xs="50" layout="column">
+      <md-card ng-repeat="sticky in stickies">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline sticky-title">{{ sticky.title }}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+          <p class="sticky-text">{{ sticky.text }}</p>
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-icon-button" aria-label="edit">
+            <md-icon><i class="material-icons">mode_edit</i></md-icon>
+          </md-button>
+          <md-button class="md-icon-button" aria-label="Settings">
+            <md-icon ><i class="material-icons">clear</i></md-icon>
+          </md-button>
+        </md-card-actions>
+      </md-card>
+
+        </div>
+    </md-content>
 
   </div>
+
   
   <!-- Angular Material requires Angular.js Libraries -->
-
 
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
@@ -34,21 +60,41 @@
   <!-- Angular Material Library -->
   <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
   
+
+  <!-- firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+
+  <!-- AngularFire -->
+  <script src="https://cdn.firebase.com/libs/angularfire/2.2.0/angularfire.min.js"></script>
+
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyBPKFraRS0wqYj9_Yp2b1sYMuapjJH98ew",
+      authDomain: "mystickyapp.firebaseapp.com",
+      databaseURL: "https://mystickyapp.firebaseio.com",
+      storageBucket: "mystickyapp.appspot.com",
+      messagingSenderId: "1037022995801"
+    };
+    firebase.initializeApp(config);
+  </script>
   <!-- Your application bootstrap  -->
-  <script type="text/javascript">    
-    /**
-     * You must include the dependency on 'ngMaterial' 
-     */
-    let app = angular.module('stickOnApp', ['ngMaterial']);
+  <script type="text/javascript"> 
+    let app = angular.module('stickOnApp', ['ngMaterial', 'firebase']);
     app.config(($mdThemingProvider) => {
     $mdThemingProvider.theme('default')
       .primaryPalette('amber')
       .accentPalette('indigo');
     })
-    app.controller('appCtrl', ['$scope', '$mdSidenav', ($scope, $mdSidenav) => {
+    app.controller('appCtrl', ['$scope', '$firebaseArray', '$mdSidenav', ($scope, $firebaseArray, $mdSidenav) => {
+        let database = firebase.database().ref("/stickies").orderByChild('timestamp');
+
+        $scope.stickies = $firebaseArray(database);
+
         $scope.toggleSidenav = (menuId) => {
           $mdSidenav(menuId).toggle();
         }
+        
     }]);
 
   </script>
