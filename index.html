@@ -19,31 +19,49 @@
      <h2>
        <span>Toolbar with Disabled/Enabled Icon Buttons</span>
      </h2>
+     <span flex></span>
+     <md-button class="md-fab" aria-label="Eat cake" ng-click="showAddSticky($event)">
+        <md-icon><i class="material-icons">note_add</i></md-icon>
+    </md-button>
    </div>
   </md-toolbar>
 
 <!-- cards -->
     <md-content class="md-padding" layout-xs="column" layout="row">
         <div flex-xs flex-gt-xs="50" layout="column">
-      <md-card ng-repeat="sticky in stickies">
-        <md-card-title>
-          <md-card-title-text>
-            <span class="md-headline sticky-title">{{ sticky.title }}</span>
-          </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-          <p class="sticky-text">{{ sticky.text }}</p>
-        </md-card-content>
-        <md-card-actions layout="row" layout-align="end center">
-          <md-button class="md-icon-button" aria-label="edit">
-            <md-icon><i class="material-icons">mode_edit</i></md-icon>
-          </md-button>
-          <md-button class="md-icon-button" aria-label="Settings">
-            <md-icon ><i class="material-icons">clear</i></md-icon>
-          </md-button>
-        </md-card-actions>
-      </md-card>
 
+          <md-card class="padded" md-whiteframe="10" ng-repeat="sticky in stickies">
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline sticky-title">{{ sticky.title }}</span>
+              </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+              <p class="sticky-text">{{ sticky.text }}</p>
+            </md-card-content>
+
+              <md-card ng-show="editEnabled">
+                <md-card-content>
+                  <h2>Card headline</h2>
+                  <p>Card content</p>
+                </md-card-content>
+                <md-card-footer>
+                Card footer
+                </md-card-footer>
+                <div class="md-actions" layout="row|column" layout-align="start|end|center start|end|center">
+                   <md-button>content</md-button>
+                 </div>
+              </md-card>
+
+            <md-card-actions layout="row" layout-align="end center">
+              <md-button class="md-icon-button" aria-label="edit" ng-click="showAdvanced($event)">
+                <md-icon><i class="material-icons">mode_edit</i></md-icon>
+              </md-button>
+              <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
+                <md-icon ><i class="material-icons">clear</i></md-icon>
+              </md-button>
+            </md-card-actions>
+          </md-card>
         </div>
     </md-content>
 
@@ -79,22 +97,160 @@
     firebase.initializeApp(config);
   </script>
   <!-- Your application bootstrap  -->
+  <script type="text/ng-template" id="dialog1.tmpl.html"><md-dialog aria-label="Edit Sticky">
+    <form ng-cloak>
+      <md-toolbar>
+        <div class="md-toolbar-tools">
+          <h2>Add Sticky</h2>
+          <span flex></span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">clear</i>
+          </md-button>
+        </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+        <div class="md-dialog-content">
+          <md-input-container class="md-block">
+            <label>Title</label>
+            <input md-no-asterisk name="description" ng-model="sticky.title">
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="md-maxlength">The description must be less than 25 characters long.</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Text</label>
+            <textarea rows="3" md-select-on-focus ng-model="sticky.text"></textarea>
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+              <div ng-message="md-maxlength">The description must be less than 300 characters long.</div>
+            </div>
+          </md-input-container>
+        </div>
+      </md-dialog-content>
+
+      <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="sticky(sticky.title, sticky.text)" ng-enter="sticky(sticky.title, sticky.text)">
+          Submit
+        </md-button>
+      </md-dialog-actions>
+    </form>
+  </md-dialog>
+  </script>
+
+ <!--  <script type="text/ng-template" id="dialog2.tmpl.html"><md-dialog aria-label="Edit Sticky">
+    <form ng-cloak>
+      <md-toolbar>
+        <div class="md-toolbar-tools">
+          <h2>Edit Sticky</h2>
+          <span flex></span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">clear</i>
+          </md-button>
+        </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+        <div class="md-dialog-content">
+          <md-input-container class="md-block">
+            <label>Title</label>
+            <input md-no-asterisk name="description" ng-model="sticky.title">
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="md-maxlength">The description must be less than 25 characters long.</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Text</label>
+            <textarea rows="3" md-select-on-focus></textarea>
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+              <div ng-message="md-maxlength">The description must be less than 300 characters long.</div>
+            </div>
+          </md-input-container>
+        </div>
+      </md-dialog-content>
+
+      <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="answer('useful')">
+          Submit
+        </md-button>
+      </md-dialog-actions>
+    </form>
+  </md-dialog>
+  </script> -->
+
   <script type="text/javascript"> 
     let app = angular.module('stickOnApp', ['ngMaterial', 'firebase']);
     app.config(($mdThemingProvider) => {
     $mdThemingProvider.theme('default')
-      .primaryPalette('amber')
+      .primaryPalette('light-green')
       .accentPalette('indigo');
     })
-    app.controller('appCtrl', ['$scope', '$firebaseArray', '$mdSidenav', ($scope, $firebaseArray, $mdSidenav) => {
-        let database = firebase.database().ref("/stickies").orderByChild('timestamp');
+    app.controller('appCtrl', ['$scope', '$firebaseArray', '$mdSidenav', '$mdDialog', ($scope, $firebaseArray, $mdSidenav, $mdDialog) => {
 
+
+      // firebase ADD, DELETE, EDIT sticky functions
+        let database = firebase.database().ref("/stickies").orderByChild('timestamp');
         $scope.stickies = $firebaseArray(database);
+
+        addSticky = (title, text) => {
+            $scope.stickies.$add({
+            title: title,
+            text: text,
+            timestamp: 0 - Date.now()
+            });
+        };
+
+        $scope.deleteSticky = function(sticky) {
+          var index = $scope.stickies.indexOf(sticky);
+          $scope.stickies.$remove(index).then(function(database) {
+            database.key === index.$id;
+          })
+        }
 
         $scope.toggleSidenav = (menuId) => {
           $mdSidenav(menuId).toggle();
         }
-        
+ 
+        $scope.status = ' ';
+        $scope.customFullscreen = false;
+
+        AddStickyDiagCtrl = ($scope, $mdDialog) => {
+          $scope.hide = () => {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = () => {
+            $mdDialog.cancel();
+          };
+
+          $scope.sticky = (title, text) => {
+            // add sticky
+            addSticky(title, text);
+            $mdDialog.hide(title, text);
+          };
+        }
+
+        $scope.showAddSticky = (ev) => {
+          console.log(ev);
+           $mdDialog.show({
+             controller: AddStickyDiagCtrl,
+             templateUrl: 'dialog1.tmpl.html',
+             parent: angular.element(document.body),
+             targetEvent: ev,
+             clickOutsideToClose:true,
+             fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+           })
+           .then((sticky) => {
+              $scope.status = 'sticky has been added';
+           }, () => {
+             $scope.status = 'You cancelled the dialog.';
+           });
+        };
+
+         
     }]);
 
   </script>
