@@ -12,9 +12,11 @@ firebase.initializeApp(config);
 let app = angular.module('stickOnApp', ['ngMaterial', 'firebase', 'ngSanitize']);
 
 app.config(($mdThemingProvider) => {
-$mdThemingProvider.theme('default')
-  .primaryPalette('light-blue')
-  .accentPalette('pink');
+  $mdThemingProvider.theme('default')
+    .primaryPalette('brown')
+    .accentPalette('green', {
+      'default': '400'
+    });
 })
 
 app.controller('appCtrl', ['$scope', '$firebaseArray', '$mdSidenav', '$mdDialog', ($scope, $firebaseArray, $mdSidenav, $mdDialog) => {

@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
   <!-- Google Material Icon  Library-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" type="text/css" href="src/style/main.css">
 </head>
 <body ng-app="stickOnApp" ng-cloak>
 
@@ -42,9 +44,8 @@
           </md-card-content>
 
           <md-card-actions layout="row" layout-align="end center">
-            <span>{{ -sticky.timestamp | date:'short' }}</span>
+            <span class="timestamp">{{ -sticky.timestamp | date:'short' }}</span>
             <span flex></span>
-
             <!-- allows sticky to be passed down to local in modal -->
             <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
               <md-icon><i class="material-icons">mode_edit</i></md-icon>
