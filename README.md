@@ -1,2 +1,2 @@
 # angular-stick-on
-sticky app built with angular, google-material, firebase
+Sticky app built with angular, angular-material, firebase
