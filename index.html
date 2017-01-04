@@ -27,50 +27,33 @@
   </md-toolbar>
 
 <!-- cards -->
-  <md-content class="md-padding">
-    <md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
-        md-row-height-gt-md="1:1" md-row-height="4:3"
-        md-gutter="8px" md-gutter-gt-sm="4px">
+  <md-content class="md-padding" layout="row" layout-wrap>
+    <div flex-xs flex-gt-xs="50" flex-sm="100" flex-gt-sm="100" layout="row" layout-align="center center" layout-wrap>
+      <md-card class="padded" style="width: 300px;" md-whiteframe="10" ng-repeat="sticky in stickies" layout-wrap>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline sticky-title">{{ sticky.title }}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+          <p ng-bind-html="sticky.text | formatText" class="sticky-text"></p>
+        </md-card-content>
 
-       <md-grid-tile md-colspan-sm="1"
-                  md-colspan-xs="1" ng-repeat="sticky in stickies">
-            <md-card class="padded" md-whiteframe="10">
-              <md-card-title>
-                <md-card-title-text>
-                  <span class="md-headline sticky-title">{{ sticky.title }}</span>
-                </md-card-title-text>
-              </md-card-title>
-              <md-card-content>
-                <p ng-bind-html="sticky.text | formatText" class="sticky-text"></p>
-              </md-card-content>
-
-                <md-card ng-show="editEnabled">
-                  <md-card-content>
-                    <h2>Card headline</h2>
-                    <p>Card content</p>
-                  </md-card-content>
-                  <md-card-footer>
-                  Card footer
-                  </md-card-footer>
-                  <div class="md-actions" layout="row|column" layout-align="start|end|center start|end|center">
-                     <md-button>content</md-button>
-                   </div>
-                </md-card>
-
-              <md-card-actions layout="row" layout-align="end center">
-                <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
-                  <md-icon><i class="material-icons">mode_edit</i></md-icon>
-                </md-button>
-                <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
-                  <md-icon ><i class="material-icons">clear</i></md-icon>
-                </md-button>
-              </md-card-actions>
-            </md-card>
-       </md-grid-tile>
-    </md-grid-list>
-
+        <md-card-actions layout="row" layout-align="end center">
+          <span>{{ -sticky.timestamp | date:'short' }}</span>
+          <span flex></span>
+          <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
+            <md-icon><i class="material-icons">mode_edit</i></md-icon>
+          </md-button>
+          <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
+            <md-icon ><i class="material-icons">clear</i></md-icon>
+          </md-button>
+        </md-card-actions>
+      </md-card>
+    </div>
   </md-content>
-  </div>
+
+</div>
 
   
   <!-- Angular Material requires Angular.js Libraries -->
