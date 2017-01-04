@@ -14,10 +14,10 @@
   <md-toolbar class="md-hue-2">
    <div class="md-toolbar-tools">
      <md-button class="md-icon-button" aria-label="Favorite">
-       <md-icon><i class="material-icons">dehaze</i></md-icon>
+       <md-icon><i class="material-icons">layers</i></md-icon>
      </md-button>
      <h2>
-       <span>Toolbar with Disabled/Enabled Icon Buttons</span>
+       <span>Stick On</span>
      </h2>
      <span flex></span>
      <md-button class="md-fab" aria-label="Eat cake" ng-click="showAddSticky($event)">
@@ -27,50 +27,57 @@
   </md-toolbar>
 
 <!-- cards -->
-    <md-content class="md-padding" layout-xs="column" layout="row">
-        <div flex-xs flex-gt-xs="50" layout="column">
+  <md-content class="md-padding">
+    <md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
+        md-row-height-gt-md="1:1" md-row-height="4:3"
+        md-gutter="8px" md-gutter-gt-sm="4px">
 
-          <md-card class="padded" md-whiteframe="10" ng-repeat="sticky in stickies">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline sticky-title">{{ sticky.title }}</span>
-              </md-card-title-text>
-            </md-card-title>
-            <md-card-content>
-              <p class="sticky-text">{{ sticky.text }}</p>
-            </md-card-content>
+       <md-grid-tile md-colspan-sm="1"
+                  md-colspan-xs="1" ng-repeat="sticky in stickies">
+            <md-card class="padded" md-whiteframe="10">
+              <md-card-title>
+                <md-card-title-text>
+                  <span class="md-headline sticky-title">{{ sticky.title }}</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content>
+                <p ng-bind-html="sticky.text | formatText" class="sticky-text"></p>
+              </md-card-content>
 
-              <md-card ng-show="editEnabled">
-                <md-card-content>
-                  <h2>Card headline</h2>
-                  <p>Card content</p>
-                </md-card-content>
-                <md-card-footer>
-                Card footer
-                </md-card-footer>
-                <div class="md-actions" layout="row|column" layout-align="start|end|center start|end|center">
-                   <md-button>content</md-button>
-                 </div>
-              </md-card>
+                <md-card ng-show="editEnabled">
+                  <md-card-content>
+                    <h2>Card headline</h2>
+                    <p>Card content</p>
+                  </md-card-content>
+                  <md-card-footer>
+                  Card footer
+                  </md-card-footer>
+                  <div class="md-actions" layout="row|column" layout-align="start|end|center start|end|center">
+                     <md-button>content</md-button>
+                   </div>
+                </md-card>
 
-            <md-card-actions layout="row" layout-align="end center">
-              <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
-                <md-icon><i class="material-icons">mode_edit</i></md-icon>
-              </md-button>
-              <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
-                <md-icon ><i class="material-icons">clear</i></md-icon>
-              </md-button>
-            </md-card-actions>
-          </md-card>
-        </div>
-    </md-content>
+              <md-card-actions layout="row" layout-align="end center">
+                <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
+                  <md-icon><i class="material-icons">mode_edit</i></md-icon>
+                </md-button>
+                <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
+                  <md-icon ><i class="material-icons">clear</i></md-icon>
+                </md-button>
+              </md-card-actions>
+            </md-card>
+       </md-grid-tile>
+    </md-grid-list>
 
+  </md-content>
   </div>
 
   
   <!-- Angular Material requires Angular.js Libraries -->
 
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script src="http://code.angularjs.org/1.2.0rc1/angular-sanitize.js"></script>
+
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-aria.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
@@ -182,11 +189,11 @@
   </script>
 
   <script type="text/javascript"> 
-    let app = angular.module('stickOnApp', ['ngMaterial', 'firebase']);
+    let app = angular.module('stickOnApp', ['ngMaterial', 'firebase', 'ngSanitize']);
     app.config(($mdThemingProvider) => {
     $mdThemingProvider.theme('default')
-      .primaryPalette('light-green')
-      .accentPalette('indigo');
+      .primaryPalette('light-blue')
+      .accentPalette('pink');
     })
     app.controller('appCtrl', ['$scope', '$firebaseArray', '$mdSidenav', '$mdDialog', ($scope, $firebaseArray, $mdSidenav, $mdDialog) => {
 
@@ -296,6 +303,18 @@
         }
          
     }]);
+    app.filter('formatText', () => {
+     return (input) => {
+      if(!input) return input;
+
+      let output = input.replace(/(\r\n|\r|\n)/g, '<br/>')
+          //replace tabs
+          .replace(/\t/g, '&nbsp;&nbsp;&nbsp;')
+          //replace spaces.
+          .replace(/ /g, '&nbsp;');
+      return output;
+     } 
+    });
 
   </script>
   
