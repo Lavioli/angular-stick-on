@@ -1,0 +1,168 @@
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <!-- Google Roboto Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <!-- Google Material Icon  Library-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body ng-app="stickOnApp" ng-cloak>
+
+  <div ng-controller="appCtrl">
+
+<!-- simple toolbar with menu -->
+    <md-toolbar class="md-hue-2">
+     <div class="md-toolbar-tools">
+       <md-button class="md-icon-button" aria-label="Favorite">
+         <md-icon><i class="material-icons">layers</i></md-icon>
+       </md-button>
+       <h2>
+         <span>Stick On</span>
+       </h2>
+       <span flex></span>
+       <md-button class="md-fab" aria-label="Eat cake" ng-click="showAddSticky($event)">
+          <md-icon><i class="material-icons">note_add</i></md-icon>
+      </md-button>
+     </div>
+    </md-toolbar>
+
+  <!-- cards -->
+    <md-content class="md-padding" layout="row" layout-wrap>
+      <div flex-xs flex-gt-xs="50" flex-sm="100" flex-gt-sm="100" layout="row" layout-align="center" layout-wrap>
+        <md-card class="padded" style="width: 300px;" md-whiteframe="10" ng-repeat="sticky in stickies" layout-wrap>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline sticky-title">{{ sticky.title }}</span>
+            </md-card-title-text>
+          </md-card-title>
+          <md-card-content>
+            <p ng-bind-html="sticky.text | formatText" class="sticky-text"></p>
+          </md-card-content>
+
+          <md-card-actions layout="row" layout-align="end center">
+            <span>{{ -sticky.timestamp | date:'short' }}</span>
+            <span flex></span>
+
+            <!-- allows sticky to be passed down to local in modal -->
+            <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
+              <md-icon><i class="material-icons">mode_edit</i></md-icon>
+            </md-button>
+            <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
+              <md-icon ><i class="material-icons">clear</i></md-icon>
+            </md-button>
+          </md-card-actions>
+        </md-card>
+      </div>
+    </md-content>
+
+  </div>
+
+  <!--Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script src="http://code.angularjs.org/1.2.0rc1/angular-sanitize.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+  
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+
+  <!-- AngularFire -->
+  <script src="https://cdn.firebase.com/libs/angularfire/2.2.0/angularfire.min.js"></script>
+
+  <!-- Add Sticky Template -->
+  <script type="text/ng-template" id="add-sticky-dialog.tmpl.html"><md-dialog aria-label="Edit Sticky">
+      <form ng-cloak>
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>Add Sticky</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+              <i class="material-icons">clear</i>
+            </md-button>
+          </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+          <div class="md-dialog-content">
+            <md-input-container class="md-block">
+              <label>Title</label>
+              <input md-no-asterisk name="description" ng-model="sticky.title">
+              <div ng-messages="projectForm.description.$error">
+                <div ng-message="md-maxlength">The description must be less than 25 characters long.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Text</label>
+              <textarea rows="3" md-select-on-focus ng-model="sticky.text"></textarea>
+              <div ng-messages="projectForm.description.$error">
+                <div ng-message="required">This is required.</div>
+                <div ng-message="md-maxlength">The description must be less than 300 characters long.</div>
+              </div>
+            </md-input-container>
+          </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+          <span flex></span>
+          <md-button ng-click="sticky(sticky.title, sticky.text)" ng-enter="sticky(sticky.title, sticky.text)">
+            Submit
+          </md-button>
+        </md-dialog-actions>
+      </form>
+    </md-dialog>
+  </script>
+
+   <!-- Edit Sticky Template -->
+  <script type="text/ng-template" id="edit-sticky-dialog.tmpl.html"><md-dialog aria-label="Edit Sticky">
+    <form ng-cloak>
+      <md-toolbar>
+        <div class="md-toolbar-tools">
+          <h2>Edit Sticky</h2>
+          <span flex></span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">clear</i>
+          </md-button>
+        </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+        <div class="md-dialog-content">
+          <md-input-container class="md-block">
+            <label>Title</label>
+            <input md-no-asterisk name="title" ng-model="sticky.title" ng-init="sticky.title">
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="md-maxlength">The description must be less than 25 characters long.</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Text</label>
+            <textarea rows="3" md-select-on-focus name="text" ng-model="sticky.text" ng-init="sticky.text"></textarea>
+            <div ng-messages="projectForm.description.$error">
+              <div ng-message="required">This is required.</div>
+              <div ng-message="md-maxlength">The description must be less than 300 characters long.</div>
+            </div>
+          </md-input-container>
+        </div>
+      </md-dialog-content>
+
+      <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="updateSticky()">
+          Submit
+        </md-button>
+      </md-dialog-actions>
+    </form>
+  </md-dialog>
+  </script>
+
+  <!-- App controller -->
+  <script type="text/javascript" src="js/index.js"></script>
+  
+</body>
+</html>
+
