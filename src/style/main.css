@@ -8,3 +8,8 @@
     font-size: 14px;
 }
 
+.add-sticky {
+	position: relative;
+    top: 42%;
+    right: 2%;
+}
