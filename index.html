@@ -54,7 +54,7 @@
               </md-card>
 
             <md-card-actions layout="row" layout-align="end center">
-              <md-button class="md-icon-button" aria-label="edit" ng-click="showAdvanced($event)">
+              <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
                 <md-icon><i class="material-icons">mode_edit</i></md-icon>
               </md-button>
               <md-button class="md-icon-button" aria-label="delete" ng-click="deleteSticky(sticky)">
@@ -139,7 +139,7 @@
   </md-dialog>
   </script>
 
- <!--  <script type="text/ng-template" id="dialog2.tmpl.html"><md-dialog aria-label="Edit Sticky">
+  <script type="text/ng-template" id="dialog2.tmpl.html"><md-dialog aria-label="Edit Sticky">
     <form ng-cloak>
       <md-toolbar>
         <div class="md-toolbar-tools">
@@ -155,14 +155,14 @@
         <div class="md-dialog-content">
           <md-input-container class="md-block">
             <label>Title</label>
-            <input md-no-asterisk name="description" ng-model="sticky.title">
+            <input md-no-asterisk name="title" ng-model="sticky.title" ng-init="sticky.title">
             <div ng-messages="projectForm.description.$error">
               <div ng-message="md-maxlength">The description must be less than 25 characters long.</div>
             </div>
           </md-input-container>
           <md-input-container class="md-block">
             <label>Text</label>
-            <textarea rows="3" md-select-on-focus></textarea>
+            <textarea rows="3" md-select-on-focus name="text" ng-model="sticky.text" ng-init="sticky.text"></textarea>
             <div ng-messages="projectForm.description.$error">
               <div ng-message="required">This is required.</div>
               <div ng-message="md-maxlength">The description must be less than 300 characters long.</div>
@@ -173,13 +173,13 @@
 
       <md-dialog-actions layout="row">
         <span flex></span>
-        <md-button ng-click="answer('useful')">
+        <md-button ng-click="updateSticky()">
           Submit
         </md-button>
       </md-dialog-actions>
     </form>
   </md-dialog>
-  </script> -->
+  </script>
 
   <script type="text/javascript"> 
     let app = angular.module('stickOnApp', ['ngMaterial', 'firebase']);
@@ -203,10 +203,20 @@
             });
         };
 
-        $scope.deleteSticky = function(sticky) {
-          var index = $scope.stickies.indexOf(sticky);
-          $scope.stickies.$remove(index).then(function(database) {
+        $scope.deleteSticky = (sticky) => {
+          console.log(sticky)
+          let index = $scope.stickies.indexOf(sticky);
+          $scope.stickies.$remove(index).then((database) => {
             database.key === index.$id;
+          })
+        }
+
+        editSticky = (sticky) => {
+          console.log('insnide edit', sticky)
+          let index = $scope.stickies.indexOf(sticky);
+
+          $scope.stickies.$save(index).then((database) => {
+            database.key == $scope.stickies[index].$id;
           })
         }
 
@@ -234,7 +244,6 @@
         }
 
         $scope.showAddSticky = (ev) => {
-          console.log(ev);
            $mdDialog.show({
              controller: AddStickyDiagCtrl,
              templateUrl: 'dialog1.tmpl.html',
@@ -250,6 +259,41 @@
            });
         };
 
+        $scope.showEditSticky = (ev, sticky) => {
+           $mdDialog.show({
+             controller: EditStickyDiagCtrl,
+             templateUrl: 'dialog2.tmpl.html',
+             parent: angular.element(document.body),
+             targetEvent: ev,
+             clickOutsideToClose:true,
+             fullscreen: $scope.customFullscreen, // Only for -xs, -sm breakpoints.
+             locals: {
+              sticky: sticky
+             }
+           })
+           .then((sticky) => {
+              $scope.status = 'sticky has been edited';
+           }, () => {
+             $scope.status = 'You cancelled the dialog.';
+           });
+        };
+
+        EditStickyDiagCtrl = ($scope, $mdDialog, sticky) => {
+          $scope.sticky = sticky
+          
+          $scope.hide = () => {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = () => {
+            $mdDialog.cancel();
+          };
+
+          $scope.updateSticky = () => {
+            editSticky(sticky);
+            $mdDialog.hide();
+          };
+        }
          
     }]);
 
