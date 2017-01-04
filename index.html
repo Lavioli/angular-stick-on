@@ -42,6 +42,8 @@
         <md-card-actions layout="row" layout-align="end center">
           <span>{{ -sticky.timestamp | date:'short' }}</span>
           <span flex></span>
+
+          <!-- allows sticky to be passed down to local in modal -->
           <md-button class="md-icon-button" aria-label="edit" ng-click="showEditSticky($event, sticky)">
             <md-icon><i class="material-icons">mode_edit</i></md-icon>
           </md-button>
@@ -56,20 +58,16 @@
 </div>
 
   
-  <!-- Angular Material requires Angular.js Libraries -->
-
+  <!--Angular.js Libraries -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
   <script src="http://code.angularjs.org/1.2.0rc1/angular-sanitize.js"></script>
-
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-aria.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
-
-  <!-- Angular Material Library -->
   <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
   
 
-  <!-- firebase -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
 
   <!-- AngularFire -->
@@ -288,7 +286,8 @@
      return (input) => {
       if(!input) return input;
 
-      let output = input.replace(/(\r\n|\r|\n)/g, '<br/>')
+      let output = input
+          .replace(/(\r\n|\r|\n)/g, '<br/>')
           //replace tabs
           .replace(/\t/g, '&nbsp;&nbsp;&nbsp;')
           //replace spaces.
